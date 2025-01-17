@@ -12,7 +12,7 @@ class Project extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['name', 'description', 'status', 'start_date', 'end_date', 'deleted_at'];
+    protected $fillable = ['name', 'description', 'status', 'start_date', 'end_date', 'deleted_at', 'author_id'];
 
     protected function casts() : array
     {

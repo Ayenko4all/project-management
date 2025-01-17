@@ -6,6 +6,7 @@ use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
@@ -34,6 +35,7 @@ class ProjectController extends Controller
         try {
             $project = Project::create([
                 "name" => $request->validated('name'),
+                "author_id" => auth()->id(),
                 "description" => $request->validated('description'),
                 "start_date" => $request->validated('start_date'),
                 "end_date" => $request->validated('end_date'),
@@ -81,13 +83,17 @@ class ProjectController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * @param UpdateProjectRequest $request
+     * @param string $id
+     * @return mixed
      */
-    public function update(UpdateProjectRequest $request, string $id)
+    public function update(UpdateProjectRequest $request, string $id): mixed
     {
         try {
             $project = Project::query()->where("id", $id)->first();
 
-            $project->authorize('update', $project);
+
+            Gate::authorize('update', $project);
 
             if(! $project){
                 return response()->json([
@@ -138,7 +144,7 @@ class ProjectController extends Controller
             ],  Response::HTTP_NOT_FOUND);
         }
 
-        $project->authorize('delete', $project);
+        Gate::authorize('delete', $project);
 
         if($project->employees()->exists()) {
             foreach ($project->employees as $employee) {

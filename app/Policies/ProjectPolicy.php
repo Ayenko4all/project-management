@@ -6,6 +6,7 @@ use App\Models\Employee;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProjectPolicy
 {
@@ -36,17 +37,17 @@ class ProjectPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(Employee $employee, Project $project): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function update(User $user, Project $project): bool
     {
-        return $employee->project()->has($project);
+        return $user->id === $project->author_id;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(Employee $employee, Project $project): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function delete(User $user, Project $project): bool
     {
-        return $employee->project()->has($project);
+        return $user->id === $project->author_id;
     }
 
     /**
