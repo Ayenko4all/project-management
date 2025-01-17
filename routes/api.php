@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\RoleController;
+use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Support\Facades\Route;
 
@@ -19,7 +21,7 @@ Route::middleware(['auth:sanctum'])->group(function (){
 
     Route::prefix('projects')->name('project.')->group(function (){
         Route::get('', [ProjectController::class, 'index'])->name('index');
-        Route::post('', [ProjectController::class, 'store'])->name('store');
+        Route::post('', [ProjectController::class, 'store'])->name('store')->middleware(RoleMiddleware::class.":Admin");
         Route::get('{project}', [ProjectController::class, 'show'])->name('show');
         Route::delete('{project}', [ProjectController::class, 'destroy'])->name('destroy');
         Route::patch('{project}', [ProjectController::class, 'restore'])->name('restore');
@@ -33,4 +35,8 @@ Route::middleware(['auth:sanctum'])->group(function (){
         Route::patch('{employee}', [EmployeeController::class, 'restore'])->name('restore');
     });
 
+    Route::middleware(RoleMiddleware::class.":Admin")->prefix('users')->name('user.')->group(function (){
+        Route::post('{user}/roles', [RoleController::class, 'assignRole'])->name('assignRole');
+        Route::delete('{user}/roles', [RoleController::class, 'detachRole'])->name('detachRole');
+    });
 });
