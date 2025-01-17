@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreEmployeeRequest;
 use App\Http\Requests\StoreProjectRequest;
+use App\Http\Requests\UpdateEmployeeRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Employee;
 use App\Models\Project;
@@ -83,7 +84,7 @@ class EmployeeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProjectRequest $request, string $id)
+    public function update(UpdateEmployeeRequest $request, string $id)
     {
         try {
             $employee = Employee::query()->where("id", $id)->first();

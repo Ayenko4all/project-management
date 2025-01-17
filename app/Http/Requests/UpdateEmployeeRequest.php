@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateProjectRequest extends FormRequest
+class UpdateEmployeeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,11 +22,10 @@ class UpdateProjectRequest extends FormRequest
     public function rules(): array
     {
         return [
+            "project_id" => ['required', 'exists:projects,id'],
+            "email" => ['required', 'email', 'unique:employees,email'],
             "name" => ['required', 'string'],
-            "description" => ['required', 'string'],
-            "start_date" => ['required', 'date', 'date_format:Y-m-d'],
-            "end_date" => ['required', 'date','date_format:Y-m-d', 'after_or_equal:start_date'],
-            "status" => ['required', 'string'],
+            "position" => ['required', 'string'],
         ];
     }
 }
