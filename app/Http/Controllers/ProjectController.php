@@ -6,6 +6,7 @@ use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
@@ -17,7 +18,20 @@ class ProjectController extends Controller
      */
     public function index(Request $request)
     {
-        $projects = Project::with('employees')->get();
+        $name = $request->query('name');
+        $status = $request->query('status');
+        $cacheKey = "projects_list";
+        $projects = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($name, $status) {
+            return Project::with('employees')
+                ->when($name, function ($query, $name) {
+                    $query->where('name', 'like', "%$name%");
+                })
+                ->when($status, function ($query, $status) {
+                    $query->where('status', $status);
+                })
+                ->paginate(10);
+        });
+
         return response()->json([
             "status" => "success",
             "status_code" => Response::HTTP_OK,

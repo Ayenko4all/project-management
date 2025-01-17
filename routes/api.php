@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthenticationController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ProjectController;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
@@ -14,6 +15,8 @@ Route::middleware([RedirectIfAuthenticated::class])->group(function (){
 
 
 Route::middleware(['auth:sanctum'])->group(function (){
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
     Route::prefix('projects')->name('project.')->group(function (){
         Route::get('', [ProjectController::class, 'index'])->name('index');
         Route::post('', [ProjectController::class, 'store'])->name('store');
@@ -29,4 +32,5 @@ Route::middleware(['auth:sanctum'])->group(function (){
         Route::delete('{employee}', [EmployeeController::class, 'destroy'])->name('destroy');
         Route::patch('{employee}', [EmployeeController::class, 'restore'])->name('restore');
     });
+
 });
